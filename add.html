@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Guitar</title>
+    <style>
+        body {
+            background-color: rgb(248, 234, 202);
+            margin: 0;
+            padding: 0;
+        }
+
+        .right-side {
+            float: right;
+            margin: 20px;
+            text-decoration: none;
+            color: black;
+            font-size: 30px; 
+            transition: color 0.3s ease;
+            font-weight: bold;
+        }
+
+        .right-side.no-click {
+            pointer-events: none; 
+        }
+
+        .left-side {
+            float: left;
+            color: rgb(206, 109, 70); 
+            font-size: 40px; 
+            text-decoration: none;
+            margin: 10px; 
+        }
+
+        label {
+            font-size: 30px;
+            color: black;
+            margin-right: 10px; 
+            font-weight: bold;
+            text-indent: 20px; 
+        }
+        .label-with-padding {
+            padding-left: 150px; 
+        }
+        input {
+            font-size: 30px;
+            padding: 10px;
+            margin: 10px 0; 
+            border: 2px solid black; 
+            border-radius: 10px; 
+            background-color: rgb(248, 234, 202); 
+        }
+        button {
+            margin-left: 850px; 
+            font-size: 30px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            background-color: rgb(214, 190, 152);
+            border: none;
+            cursor: pointer;
+        }
+        .table2 {
+            width: 80%;
+            margin: 50px auto;
+            border-collapse: collapse;
+            background-color: rgb(248, 234, 202)
+        }
+
+        .table2, .table2 th, .table2 td {
+            border: none; 
+        }
+
+        .table2 th, .table2 td {
+            text-align: left; 
+        }
+
+    </style>
+</head>
+<body>
+    <a href="search.html" class="right-side">Search</a>
+    <a href="add.html" class="right-side no-click">Add</a>
+    <a href="about.html" class="right-side">About</a>
+    <a href="index.html" class="left-side">Guitar Inventory<br>Management</a>
+    <br><br>
+    <table class="table2">
+        <tr>
+            <td><label for="serial-number">Serial number</label></td>
+            <td><input type="text" id="serial-number"></td>
+        </tr>
+        <tr>
+            <td><label for="price">Price</label></td>
+            <td><input type="text" id="price"></td>
+        </tr>
+        <tr>
+            <td><label for="builder">Builder</label></td>
+            <td><input type="text" id="builder"></td>
+        </tr>
+        <tr>
+            <td><label for="model">Model</label></td>
+            <td><input type="text" id="model"></td>
+        </tr>
+        <tr>
+            <td><label for="type">Type</label></td>
+            <td><input type="text" id="type"></td>
+        </tr>
+        <tr>
+            <td><label for="back-wood">Back wood</label></td>
+            <td><input type="text" id="back-wood"></td>
+        </tr>
+        <tr>
+            <td><label for="top-wood">Top wood</label></td>
+            <td><input type="text" id="top-wood"></td>
+        </tr>
+    </table>
+    <button onclick="addGuitar()">Add Guitar</button>
+<script>
+    let host = "http://localhost:8080";
+        async function addGuitar(){
+            let message = "";
+            let guitarSerialNumber = document.getElementById("serial-number").value;
+            let guitarPrice = document.getElementById("price").value;
+            let guitarBuilder = document.getElementById("builder").value;
+            let guitarModel = document.getElementById("model").value;
+            let guitarType = document.getElementById("type").value;
+            let guitarBackWood = document.getElementById("back-wood").value;
+            let guitarTopWood = document.getElementById("top-wood").value;
+            let guitar = {
+                serialNumber: guitarSerialNumber,
+                price: guitarPrice,
+                builder: guitarBuilder,
+                model: guitarModel,
+                type: guitarType,
+                backWood: guitarBackWood,
+                topWood: guitarTopWood
+            };
+            alert("You entered:" + JSON.stringify(guitar));
+    
+            let request = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(guitar)
+            };
+            let response = await fetch(host + "/guitar", request);
+            if(response.status == 200){
+                    message = "The guitar was added successfully";
+            } else {
+                console.log(response)
+                message = "Something went wrong! Guitar data could not be saved.";
+            }
+            alert(message)
+        }
+    </script>
+</body>
+</html>
