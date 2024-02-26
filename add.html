@@ -116,8 +116,8 @@
     <button onclick="addGuitar()">Add Guitar</button>
 <script>
     let host = "http://localhost:8080";
-        async function addGuitar(){
-            let message = "";
+
+    async function addGuitar() {
             let guitarSerialNumber = document.getElementById("serial-number").value;
             let guitarPrice = document.getElementById("price").value;
             let guitarBuilder = document.getElementById("builder").value;
@@ -125,6 +125,13 @@
             let guitarType = document.getElementById("type").value;
             let guitarBackWood = document.getElementById("back-wood").value;
             let guitarTopWood = document.getElementById("top-wood").value;
+
+
+            if (!guitarSerialNumber || !guitarPrice || !guitarBuilder || !guitarModel || !guitarType || !guitarBackWood || !guitarTopWood) {
+                alert("Please enter values for all fields.");
+                return;
+            }
+
             let guitar = {
                 serialNumber: guitarSerialNumber,
                 price: guitarPrice,
@@ -134,23 +141,22 @@
                 backWood: guitarBackWood,
                 topWood: guitarTopWood
             };
-            alert("You entered:" + JSON.stringify(guitar));
-    
-            let request = {
+
+            // Send data to the backend
+            let response = await fetch(host + "/guitar", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(guitar)
-            };
-            let response = await fetch(host + "/guitar", request);
-            if(response.status == 200){
-                    message = "The guitar was added successfully";
+            });
+
+            if (response.ok) {
+                alert("The guitar was added to the system.");
             } else {
-                console.log(response)
-                message = "Something went wrong! Guitar data could not be saved.";
+                console.error(response);
+                alert("Something went wrong. Please try again or contact the customer support team.");
             }
-            alert(message)
         }
     </script>
 </body>

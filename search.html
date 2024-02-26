@@ -121,6 +121,7 @@
         </tr>
     </table>
     <button onclick="search()">Search</button>
+
     <table class="table1">
         <thead>
             <tr>
@@ -137,77 +138,50 @@
     </table>
 
     <script>
+        let host = "http://localhost:8080";
         async function search() {
-            let guitars = [{
-                serialNumber: "123456",
-                price: 1500,
-                builder: "Fender",
-                model: "Stratocaster",
-                type: "Electric",
-                backWood: "Alder",
-                topWood: "Maple"
-            },
-            {
-                serialNumber: "789012",
-                price: 1200,
-                builder: "Gibson",
-                model: "Les Paul",
-                type: "Electric",
-                backWood: "Mahogany",
-                topWood: "Maple"
-            },
-            {
-                serialNumber: "345678",
-                price: 800,
-                builder: "Martin",
-                model: "D-28",
-                type: "Acoustic",
-                backWood: "Rosewood",
-                topWood: "Spruce"
-            },{
-                serialNumber: "567890",
-                price: 1000,
-                builder: "Taylor",
-                model: "814ce",
-                type: "Acoustic",
-                backWood: "Rosewood",
-                topWood: "Sitka Spruce"
-            },{
-                serialNumber: "901234",
-                price: 1800,
-                builder: "PRS",
-                model: "Custom 24",
-                type: "Electric",
-                backWood: "Mahogany",
-                topWood: "Maple"
-            }];
             let builderInput = document.getElementById("builder").value.toLowerCase();
             let modelInput = document.getElementById("model").value.toLowerCase();
             let typeInput = document.getElementById("type").value.toLowerCase();
             let backWoodInput = document.getElementById("back-wood").value.toLowerCase();
             let topWoodInput = document.getElementById("top-wood").value.toLowerCase();
-    
+
+            try {
+                let response = await fetch(host + `/guitar/search?builder=${builderInput}&model=${modelInput}&type=${typeInput}&backWood=${backWoodInput}&topWood=${topWoodInput}`);
+                let result = await response.json();
+
+                if (response.ok) {
+                    displaySearchResults(result);
+                } else {
+                    console.error(result);
+                    alert("Something went wrong. Please try again or contact the customer support team.");
+                }
+            } catch (error) {
+                console.error(error);
+                alert("An error occurred. Please try again or contact the customer support team.");
+            }
+        }
+
+        function displaySearchResults(results) {
             let table = document.getElementById("searchResult");
             table.innerHTML = "";
-    
-            for (let guitar of guitars) {
-                if (
-                    (builderInput === '' || guitar.builder.toLowerCase().includes(builderInput)) &&
-                    (modelInput === '' || guitar.model.toLowerCase().includes(modelInput)) &&
-                    (typeInput === '' || guitar.type.toLowerCase().includes(typeInput)) &&
-                    (backWoodInput === '' || guitar.backWood.toLowerCase().includes(backWoodInput)) &&
-                    (topWoodInput === '' || guitar.topWood.toLowerCase().includes(topWoodInput))
-                ) {
-                    let row = document.createElement("tr");
-                    for (let key in guitar) {
                         let cell = document.createElement("td");
-                        let cellText = document.createTextNode(guitar[key]);
-                        cell.appendChild(cellText);
-                        row.appendChild(cell);
-                    }
-                    table.appendChild(row);
-                }
+
+            if (results.length === 0) {
+                let noResultsRow = table.insertRow(0);
+                let cell = noResultsRow.insertCell(0);
+                cell.colSpan = 7;
+                cell.textContent = "No matching results found.";
+                return;
             }
+
+            results.forEach(guitar => {
+                let row = table.insertRow(-1);
+                for (let key in guitar) {
+                    let cell = row.insertCell(-1);
+                    cell.textContent = guitar[key];
+                }
+            });
         }
     </script>
     
